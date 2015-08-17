@@ -1,28 +1,33 @@
-# HTTP Middleware
+# HTTP Middleware  ( HTTP ကြားခံအလွှာ )
 
-- [Introduction](#introduction)
-- [Defining Middleware](#defining-middleware)
-- [Registering Middleware](#registering-middleware)
-- [Middleware Parameters](#middleware-parameters)
-- [Terminable Middleware](#terminable-middleware)
-
+- [နိဒါန်း](#introduction)
+- [ Middleware ကို သတ်မှတ်ခြင်း](#defining-middleware)
+- [ Middleware နဲ. Resistering ပြုလုပ်ခြင်း](#registering-middleware)
+- [Middleware ရဲ. သတ်မှတ်ချက်များ](#middleware-parameters)
+- [ Middlewareကို အဆုံးသတ်ခြင်း](#terminable-middleware)
+    
 <a name="introduction"></a>
 ## Introduction
-
-HTTP middleware provide a convenient mechanism for filtering HTTP requests entering your application. For example, Laravel includes a middleware that verifies the user of your application is authenticated. If the user is not authenticated, the middleware will redirect the user to the login screen. However, if the user is authenticated, the middleware will allow the request to proceed further into the application.
-
-Of course, additional middleware can be written to perform a variety of tasks besides authentication. A CORS middleware might be responsible for adding the proper headers to all responses leaving your application. A logging middleware might log all incoming requests to your application.
-
-There are several middleware included in the Laravel framework, including middleware for maintenance, authentication, CSRF protection, and more. All of these middleware are located in the `app/Http/Middleware` directory.
+HTTP middleware က web application ထဲကို ဝင်လာတဲ. http requests တွေ အကုန်လုံးကို filtering လုပ်ပေးတဲ. အရာတစ်ခုဖြစ်ပါတယ်။
+ဥပမာ ၊ Web application ကိုအသုံးပြုတဲ. User ကို အသုံးပြုခွင်.ရှိမရှိ ကို Laravel မှာ ပါဝင်တဲ. Middleware တစ်ခုက သတ်မှတ်ပေးနေတယ်
+တကယ်လို. user က အသုံးပြုခွင်.မရှိလျှင် login screen ကို middleware က redirect လုပ်ပေးပါလိမ်.မယ် 
+သို.ပေမဲ. ၊ user က အသုံးပြုခွင်. ရှိလျှင် application ထဲသို.request ဝင်ရန် middleware ကခွင်. ပြုပေး သည် ။
+တကယ်တော.။ ထပ်ပေါင်းထည်.ထားတဲ. middleware က authentication လိုမျိုး လည်းပဲ လုပ်ဆောင်ချက်တစ်မျိုးဖြစ် လုပ်ဆောင်ပေးသည်။
+CORS middleware တစ်ခုက  ထပ်ပေါင်းထည်.ထားတဲ. headers တွေအတွက် application ကနေပြီး  အကုန်လုံး responses လုပ်ပေးတဲ. တာဝန်ရှိသည်။
+logging middleware တစ်ခုက application ထဲကို ဝင်လာသမျှ requests တွေအကုန်လုံးကို log မှတ်ပေးခဲ.နိုင်သည်။
+Laravel Framework တွေ များစွာသော middleware တွေပါဝင်ခဲ.သည်၊
+maintenance အတွက် middleware,authentication အတွက် middleware,CSRF protection အတွက် middleware နဲ. များစွာသော middlewares များ ပါဝင်နေသည်။
+အဲ.ဒီ middleware တွေအကုန်လုံးကတော. `app/Http/Middleware` ဆိုတဲ. directory တွေတည်ရှိနေသည်။
 
 <a name="defining-middleware"></a>
-## Defining Middleware
+## Middleware ကို သတ်မှတ်ခြင်း
 
-To create a new middleware, use the `make:middleware` Artisan command:
+Middleware အသစ်တစ်ခုကို create လုပ်ရန်  အသုံးပြုရမဲ.  Artisan command က`make:middleware` 
 
     php artisan make:middleware OldMiddleware
 
-This command will place a new `OldMiddleware` class within your `app/Http/Middleware` directory. In this middleware, we will only allow access to the route if the supplied `age` is greater than 200. Otherwise, we will redirect the users back to the "home" URI.
+အဲ.ဒီ command က `app/Http/Middleware` ဆိုတဲ. directory ထဲမှာ `OldMiddleware` ဆိုပြီးနေရာယူနေလိမ်.မည်။
+ အဲ.ဒီ middleware မှာ, 200 `age` ထက် ကြီး လျှင် route က access လုပ်ဖို. ခွင်.ပြုတယ်။ အခြားဟာတွေဆိုရင် user ကိုhome URI သို. redirect လုပ်ပေးသည်။
 
     <?php
 
@@ -50,13 +55,17 @@ This command will place a new `OldMiddleware` class within your `app/Http/Middle
 
     }
 
-As you can see, if the given `age` is less than or equal to `200`, the middleware will return an HTTP redirect to the client; otherwise, the request will be passed further into the application. To pass the request deeper into the application (allowing the middleware to "pass"), simply call the `$next` callback with the `$request`.
+ပေးလိုက်တဲ. `age` က `200` နဲ. ညီမယ် ဒါမှမဟုတ် နည်းမယ်ဆိုရင် , middleware က  client သို. http redirect လုပ်ပေးမယ်.၊ တစ်နည်းအားဖြင်. request က  application က ဖြတ်ခွင်.ပေးလိမ်.မယ် ။ , simply call the `$next` callback with the `$request`.
+request က ပိုပြီး ဝင်ရောက်သွားမယ် application ထဲကို ( middleware က ဖြတ် ခွင်.ပြုမယ် ) , ရိုးရှင်းစွာ`$next` ကို call မယ် `$request` နဲ.  ပြန်ခေါ်မည် 
 
-It's best to envision middleware as a series of "layers" HTTP requests must pass through before they hit your application. Each layer can examine the request and even reject it entirely.
+middleware ကို a series of layers လို. အကောင်းဆုံးမြင်နိုင်သည် , http request တွေ သည် application ကို မထိရောက်ခင် middleware  ဖြတ်ရမယ်  ။ Layer တစ်ခုချင်းစီ  request ကို သတ်မှတ် နိုင်တယ်  နောက်ပြီး လုံး၀လည်းreject လုပ်နိုင်တယ် 
+
 
 ### *Before* / *After* Middleware
 
-Whether a middleware runs before or after a request depends on the middleware itself. For example, the following middleware would perform some task **before** the request is handled by the application:
+middleware တစ်ခုက မလုပ်ခင် မှာ runမယ် လုပ်ပြီးတော.မှ run မယ်ဆိုတာ ကတော. middleware ပေါ်မှာဘဲ မူတည်သည်။ 
+ဥပမာ  ၊ application ဖြင်. request ကို handle မလုပ် မီ အချို.  task တွေကို  အောက်ပါ middleware  လုပ်ဆောင်လိမ်.မယ်  
+
 
     <?php
 
@@ -74,7 +83,7 @@ Whether a middleware runs before or after a request depends on the middleware it
         }
     }
 
-However, this middleware would perform its task **after** the request is handled by the application:
+သို.ရာတွေ , application ဖြင်. request ကို handle လုပ်ပြီးတော.မှ  သူ.ရဲ. task ကို this  middleware က လုပ်ဆောင်လိမ်.မယ်  
 
     <?php
 
@@ -95,15 +104,20 @@ However, this middleware would perform its task **after** the request is handled
     }
 
 <a name="registering-middleware"></a>
-## Registering Middleware
+## Middleware နဲ. Registering  ပြုလုပ်ခြင်း 
 
 ### Global Middleware
 
-If you want a middleware to be run during every HTTP request to your application, simply list the middleware class in the `$middleware` property of your `app/Http/Kernel.php` class.
+Application ထဲကို ဝင်လာတဲ. HTTP request တိုင်း ကို ဖမ်းတဲ. middleware ကို လိုချင်လျှင် , simply  list the middleware class မှာ `app/Http/Kernel.php` class.  ၏`$middleware` property ထဲတွင် ရှိသည်။
+
 
 ### Assigning Middleware To Routes
 
-If you would like to assign middleware to specific routes, you should first assign the middleware a short-hand key in your `app/Http/Kernel.php` file. By default, the `$routeMiddleware` property of this class contains entries for the middleware included with Laravel. To add your own, simply append it to this list and assign it a key of your choosing. For example:
+ middlware နဲ.  routes တွေကို အတိအကျ သတ် မှတ် ချင်လျှင် ၊ the middleware a short-hand key ကို `app/Http/Kernel.php`  ဆိုတဲ. file ထဲ မှာ သတ် မှတ် ရမည် ။ Default အနေနဲ. အဲ.ဒီ class ၏ `$routeMiddleware` propertiy  က  
+ the middleware အတွက် Laravel နဲ.အတူ ပါ၀င်ခွင်. ရှိ သည်။ `App\Http\Kernel` Class   ထဲက list ထဲကို Key တစ်ခု  ကိုယ်တိုင် ပေါင်းထည်.ပေးရမည်။
+
+
+ For example:
 
     // Within App\Http\Kernel Class...
 
@@ -120,11 +134,13 @@ Once the middleware has been defined in the HTTP kernel, you may use the `middle
     }]);
 
 <a name="middleware-parameters"></a>
-## Middleware Parameters
+##Middleware ရဲ. သတ်မှတ်ချက်များ
 
-Middleware can also receive additional custom parameters. For example, if your application needs to verify that the authenticated user has a given "role" before performing a given action, you could create a `RoleMiddleware` that receives a role name as an additional argument.
+additional custom parameters ကို Middleware က လက်ခံနိုင်တယ် ။
+For example, if your application needs to verify that the authenticated user has a given "role" before performing a given action, 
+ဥပမာ၊ the authenticated user  သည်  role လို.ပေး ထားတဲ.  action ကို မလုပ် ဆောင်မှီ  application က vertify လုပ်ရန်လိုသည်။ an additional argument အဖြင်. လက်ခံရန်  role name တစ်ခုအနေနဲ. ဖြစ် သော  `RoleMiddleware` ကို create လုပ်ရမည် ။ 
 
-Additional middleware parameters will be passed to the middleware after the `$next` argument:
+The `$next` argument ပြီးတော.  Additional middleware parameters က middleware ထဲကို ဖြတ်သန်းသွားလိမ်.မည်။
 
     <?php
 
@@ -153,19 +169,26 @@ Additional middleware parameters will be passed to the middleware after the `$ne
 
     }
 
-Middleware parameters may be specified when defining the route by separating the middleware name and parameters with a `:`. Multiple parameters should be delimited by commas:
+
+
+`route` ကို  the middleware  name နဲ. parameter တွေကို `:` နဲ. အတူ ပိုင်းခြားပြီး  သတ် မှတ်ထားသောအခါ Middleware parameters တွေကို သတ်မှတ်ခဲ.ချင်မှ သတ်မှတ်လိမ်.မည်၊။ commas ဖြင်.  Multiple parameters တွေကို ကန်.သတ်ထားရမည်။
+    
+
 
     Route::put('post/{id}', ['middleware' => 'role:editor', function ($id) {
         //
     }]);
 
 <a name="terminable-middleware"></a>
-## Terminable Middleware
+## Middlewareကို အဆုံးသတ်ခြင်း
 
-Sometimes a middleware may need to do some work after the HTTP response has already been sent to the browser. For example, the "session" middleware included with Laravel writes the session data to storage _after_ the response has been sent to the browser. To accomplish this, define the middleware as "terminable" by adding a `terminate` method to the middleware:
+
+
+ HTTP response က Browser ကို ပို.ပေးပြီးနောက်  တစ်ခါတစ်ရံ middleware က  အချို.အလုပ်တွေကိုလုပ် ပေးရန်လိုသည် ။ For example,  Browser ကို response လုပ် ပေးပြီးနောက် Laravel မှာပါတဲ. the "session" middleware က  the session data ကို သိမ်းထားပေးသည်၊   `terminate` method ကို the  middleware ထဲ ပေါင်းထည်.ခြင်းဖြင်. အဆုံးသတ် သည်။
+  
 
     <?php
-
+    
     namespace Illuminate\Session\Middleware;
 
     use Closure;
@@ -183,6 +206,4 @@ Sometimes a middleware may need to do some work after the HTTP response has alre
         }
     }
 
-The `terminate` method should receive both the request and the response. Once you have defined a terminable middleware, you should add it to the list of global middlewares in your HTTP kernel.
-
-When calling the `terminate` method on your middleware, Laravel will resolve a fresh instance of the middleware from the [service container](/docs/{{version}}/container). If you would like to use the same middleware instance when the `handle` and `terminate` methods are called, register the middleware with the container using the container's `singleton` method.
+The `terminate` method သည်  the request နဲ. the response  နှစ်ခုစလုံးကို လက်ခံရမည်။တစ်ကြိမ် terminable middleware တစ်ခုကို သတ် မှတ်ပြီးတိုင်း    HTTP kernel ထဲကို global middlewares ရဲ.  list ထဲကို terminable middleware ထည်.ရမည် ။
