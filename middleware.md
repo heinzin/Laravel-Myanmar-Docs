@@ -207,3 +207,5 @@ The `$next` argument ပြီးတော.  Additional middleware parameters �
     }
 
 The `terminate` method သည်  the request နဲ. the response  နှစ်ခုစလုံးကို လက်ခံရမည်။တစ်ကြိမ် terminable middleware တစ်ခုကို သတ် မှတ်ပြီးတိုင်း    HTTP kernel ထဲကို global middlewares ရဲ.  list ထဲကို terminable middleware ထည်.ရမည် ။
+
+Middleware မှာ `terminate` method ကို ခေါ် သောအခါ middleware ရဲ. ဖြစ်စဥ် အသစ်တစ်ခုကို  Laravel က  [service container](http://laravel.com/docs/5.1/container) မှ  ဆုံးဖြတ်ပေးသည်။ `handle` and `terminate` methods တွေ ကို ခေါ်ေသာအခါ တူညီတဲ. middleware ဖြစ်စဥ်  ကို အသုံးပြုချင်လျှင်  container ရဲ. `singleton` method ကိုသုံးပြီး  middleware ကို container နဲ.အတူ register လုပ်ပြီးသုံးနိုင်သည်။
